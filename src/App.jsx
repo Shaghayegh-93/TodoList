@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import AddNewNote from "./components/AddNewNote";
+import Navbar from "./components/Navbar";
+import TodoList from "./components/TodoList";
+import TodoListStatus from "./components/TodoListStatus";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todoList, setTodoList] = useState(
+    () => JSON.parse(localStorage.getItem("TODOLIST")) || []
+  );
+  const [sortBy, setSortBy] = useState("earliest");
+
+  const onAddTodo = (newTodo) => {
+    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
+  };
+  const onCompleted = (e) => {
+    const todoId = Number(e.target.value);
+
+    setTodoList((prevTodoList) =>
+      prevTodoList.map((todo) =>
+        todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+  const removeHandler = (id) => {
+    const updatedTodoList = todoList.filter((todo) => todo.id !== id);
+    setTodoList(updatedTodoList);
+  };
+
+  // useEffect(() => {
+  //   JSON.parse(localStorage.getItem("TODOLIST")) || [];
+  // }, []);
+  //  useEffect(() => {
+  //    const storedTodoList = JSON.parse(localStorage.getItem("TODOLIST")) || [];
+  //    setTodoList(storedTodoList);
+  //  }, []);
+  // useEffect(() => {
+  //   const storedTodoList = JSON.parse(localStorage.getItem("TODOLIST")) || [];
+  //   console.log("Retrieved data from localStorage:", storedTodoList);
+  //   setTodoList(storedTodoList);
+  // }, []);
+  useEffect(() => {
+    localStorage.setItem("TODOLIST", JSON.stringify(todoList));
+  }, [todoList]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container ">
+      <Navbar
+        todoList={todoList}
+        sortBy={sortBy}
+        sortHandler={(e) => setSortBy(e.target.value)}
+      />
+
+      <div className="flex justify-between gap-8">
+        <AddNewNote onAddTodo={onAddTodo} />
+        <div className="w-[60%]">
+          <TodoListStatus todoList={todoList} />
+          <TodoList
+            todoList={todoList}
+            onCompleted={onCompleted}
+            removeHandler={removeHandler}
+            sortBy={sortBy}
+          />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
