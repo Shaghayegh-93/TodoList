@@ -28,18 +28,7 @@ function App() {
     setTodoList(updatedTodoList);
   };
 
-  // useEffect(() => {
-  //   JSON.parse(localStorage.getItem("TODOLIST")) || [];
-  // }, []);
-  //  useEffect(() => {
-  //    const storedTodoList = JSON.parse(localStorage.getItem("TODOLIST")) || [];
-  //    setTodoList(storedTodoList);
-  //  }, []);
-  // useEffect(() => {
-  //   const storedTodoList = JSON.parse(localStorage.getItem("TODOLIST")) || [];
-  //   console.log("Retrieved data from localStorage:", storedTodoList);
-  //   setTodoList(storedTodoList);
-  // }, []);
+  
   useEffect(() => {
     localStorage.setItem("TODOLIST", JSON.stringify(todoList));
   }, [todoList]);
